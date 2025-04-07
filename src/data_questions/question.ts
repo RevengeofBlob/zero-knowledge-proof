@@ -19,7 +19,7 @@ export const KnowledgeQuestions: Question[] = [
     },
     {
         question: "Which county is UMBC in?",
-        answer: "Baltimore county",
+        answer: "Baltimore",
         image: null
     }
 ];
