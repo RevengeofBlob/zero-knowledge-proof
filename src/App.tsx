@@ -1,27 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
+import logo from './images/freddie313.png';
+import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
+import QuestionTab from './components/questionTab';
 import './App.css';
 
 
-function App() {
+const Home: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Hypixel's legit website link
-        </a>
+        <img src={logo} className="image" alt="logo" />
+        <h3>
+          You want to win a chance to earn tickets to see the Minecraft Movie?
+          FLINT N STEEL!
+        </h3>
+        <Link to="/quiz" className="App Link" style={{color: '#FFF'}} >Click Here To Enter The Raffle!</Link>
       </header>
     </div>
   );
 }
+
+const App: React.FC = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/quiz" element={<QuestionTab />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default App;
