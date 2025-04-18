@@ -1,39 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { KnowledgeQuestions, Question } from '../data_questions/question';
+import ratImage from '../images/holdrat.png';
+import error from '../images/error.png';
 
 const QuestionTab: React.FC = () => {
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [correctCount, setCorrectCount] = useState(0);
-    const [userAnswer, setUserAnswer] = useState('');
-    const navigate = useNavigate();
-  
-    const currentQuestion: Question = KnowledgeQuestions[currentQuestionIndex];
-  
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-  
-      // Check if the answer is correct (case-insensitive)
-      if (userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase()) {
-        setCorrectCount(correctCount + 1);
-  
-        if (correctCount + 1 === 3) {
-          // After 3 correct answers, redirect to the YouTube link
-          window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-          return;
-        }
-      }
-  
-      // Move to the next question (loop back to 0 if at the end)
-      setCurrentQuestionIndex((prev) => 
-        prev + 1 < KnowledgeQuestions.length ? prev + 1 : 0
-      );
-      setUserAnswer(''); // Reset input field
-    };
-  
-    return (
-      <div className="App">
-        <header className="App-header">
+  const NUM_NEED_ANSWERED = 3;
+  const size = KnowledgeQuestions.length;
+  const randomIndex = Math.floor(Math.random() * KnowledgeQuestions.length);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(randomIndex);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [userAnswer, setUserAnswer] = useState('');
+  const [currentImage, setCurrentImage] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const currentQuestion: Question = KnowledgeQuestions[currentQuestionIndex];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check if the answer is correct (case-insensitive)
+    if (userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase()) {
+      setCorrectCount(correctCount + 1);
+    }
+    const size = KnowledgeQuestions.length;
+    const randomIndex = Math.floor(Math.random() * KnowledgeQuestions.length);
+    // Move to the next question (loop back to 0 if at the end)
+    setCurrentQuestionIndex(randomIndex);
+    setUserAnswer(''); // Reset input field
+  };
+
+  useEffect(() => {
+    if (correctCount === NUM_NEED_ANSWERED) {
+      window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+    }
+  }, [correctCount]);
+
+  useEffect(() => {
+    if (currentQuestion.image) {
+
+    }
+    setCurrentImage(currentQuestion.image? ratImage: null);
+  }, [currentQuestion.image])
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        {!currentQuestion && (
+          <div>
+          <img src={ratImage}
+            className='image' 
+            alt="logo" 
+            width="150" 
+            height=""/>
+          <h1>Question Loading...</h1>
+        </div>
+        )}
+        {correctCount === NUM_NEED_ANSWERED && (
+          <div>
+            <img src={ratImage}
+              className='image' 
+              alt="logo" 
+              width="100" 
+              height="100"
+            />
+            <h1>Redirecting your sorry ass...</h1>
+          </div>
+        )}
+        {correctCount < NUM_NEED_ANSWERED && (
+        <div>
+          <div
+            style={{
+              width: '200px', // Fixed width for the image space
+              aspectRatio: '1 / 1', // Ensures square shape
+              marginBottom: '10px', // Consistent spacing below
+            }}
+          >
+            {currentImage && (
+              <img
+                src={currentImage}
+                className="image"
+                alt="question image"
+                style={{
+                  width: '100%', // Fill the container
+                  height: '100%', // Fill the container
+                  objectFit: 'cover', // Crop to fit square
+                  borderRadius: '8px', // Optional: slight rounding
+                }}
+              />
+            )}
+          </div>
           <h2>Quiz Time!</h2>
           <p>Correct Answers: {correctCount} / 3</p>
           <div>
@@ -44,13 +99,38 @@ const QuestionTab: React.FC = () => {
                 value={userAnswer}
                 onChange={(e) => setUserAnswer(e.target.value)}
                 placeholder="Type your answer"
+                style={{
+                  backgroundColor: '#ffffff',
+                  color: '#000000',
+                  border: 'none',
+                  padding: '8px 12px',
+                  fontSize: '16px',
+                  marginRight: '10px',
+                  borderRadius: '4px',
+                  outline: 'none',
+                }}
               />
-              <button type="submit">Submit</button>
+              <button
+                type="submit"
+                style={{
+                  backgroundColor: '#3cb371',
+                  color: '#000000',
+                  border: 'none',
+                  padding: '8px 12px',
+                  fontSize: '16px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                Submit
+              </button>
             </form>
           </div>
-        </header>
-      </div>
-    );
+        </div>
+      )}
+      </header>
+    </div>
+  );
 };
 
 export default QuestionTab;

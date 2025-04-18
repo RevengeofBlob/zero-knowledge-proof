@@ -21,5 +21,35 @@ export const KnowledgeQuestions: Question[] = [
         question: "Which county is UMBC in?",
         answer: "Baltimore",
         image: null
-    }
+    },
+    {
+        question: "What time is it?",
+        answer: "9:26",
+        image: "clock1.png"
+    },
+    {
+        question: "What time is it?",
+        answer: "3:25",
+        image: "clock2.png"
+    },
+    {
+        question: "What time is it?",
+        answer: "10:14",
+        image: "clock3.png"
+    },
+    {
+        question: "What time is it?",
+        answer: "9:24",
+        image: "clock4.png"
+    },
+    {
+        question: "What time is it?",
+        answer: "12:44",
+        image: "clock5.png"
+    },
+    {
+        question: "What time is it?",
+        answer: "6:32",
+        image: "clock6.png"
+    },
 ];
