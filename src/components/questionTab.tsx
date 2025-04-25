@@ -4,16 +4,27 @@ import { KnowledgeQuestions, Question } from '../data_questions/question';
 import ratImage from '../images/holdrat.png';
 import error from '../images/error.png';
 
+
+// Function to shuffle elements
+const shuffle = (array: any[]) => { 
+  for (let i = array.length - 1; i > 0; i--) { 
+    const j = Math.floor(Math.random() * (i + 1)); 
+    [array[i], array[j]] = [array[j], array[i]]; 
+  } 
+  return array; 
+}; 
+const questions: Question[] = shuffle(KnowledgeQuestions);
+
 const QuestionTab: React.FC = () => {
   const NUM_NEED_ANSWERED = 3;
-  const randomIndex = Math.floor(Math.random() * KnowledgeQuestions.length);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(randomIndex);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(false);
-  const navigate = useNavigate();
-  const currentQuestion: Question = KnowledgeQuestions[currentQuestionIndex];
+  const [numQuestionsSeen, setNumQuestionsSeen] = useState(0);
+  const [maxReached, setMaxReached] = useState(false);
+  const currentQuestion: Question = questions[currentQuestionIndex];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,23 +34,36 @@ const QuestionTab: React.FC = () => {
       setCorrectCount(correctCount + 1);
     }
 
-    const randomIndex = Math.floor(Math.random() * KnowledgeQuestions.length);
-    // Move to the next question (loop back to 0 if at the end)
-    setCurrentQuestionIndex(randomIndex); 
+    // Index increment check to prevent crash
+    if (currentQuestionIndex + 1 < KnowledgeQuestions.length) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+    setNumQuestionsSeen(numQuestionsSeen + 1);
     setUserAnswer(''); // Reset input field
+
   };
+
+  useEffect(() => {
+    console.log(numQuestionsSeen);
+    // Move to the next question (loop back to 0 if at the end)
+    if (numQuestionsSeen >= KnowledgeQuestions.length) {
+      console.log('Max reached!');
+      setMaxReached(true);
+    }
+  }, [numQuestionsSeen]);
 
   // Use effect to properly track correctCount
   useEffect(() => {
     if (correctCount === NUM_NEED_ANSWERED) {
-      window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+      //window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
     }
   }, [correctCount]);
 
   // Dynamically import image if the question has one
   useEffect(() => {
-    if (currentQuestion.image) {
+    if (!maxReached && currentQuestion.image) {
       setImageLoading(true);
+      setCurrentImage(error);
       import(`../images/${currentQuestion.image}`).then((imageModule) => {
         setCurrentImage(imageModule.default);
         setImageLoading(false);
@@ -72,14 +96,33 @@ const QuestionTab: React.FC = () => {
           <div>
             <img src={ratImage}
               className='image' 
-              alt="logo" 
-              width="100" 
-              height="100"
+              alt="rat"  
+              style={{
+                width: '25%', // Fill the container
+                height: '25%', // Fill the container
+                backgroundColor: '#ffffff', // White background
+                display: 'center', // Center the image inside
+              }}
             />
-            <h1>Redirecting your sorry ass...</h1>
+            <h1>Thank you for verifying... Please wait.</h1>
           </div>
         )}
-        {correctCount < NUM_NEED_ANSWERED && (
+        {maxReached && (
+          <div>
+          <img src={ratImage}
+            className='image' 
+            alt="rat"  
+            style={{
+              width: '25%', // Fill the container
+              height: '25%', // Fill the container
+              backgroundColor: '#ffffff', // White background
+              display: 'center', // Center the image inside
+            }}
+          />
+          <h1>Damn you suck!</h1>
+        </div>
+        )}
+        {!maxReached && correctCount < NUM_NEED_ANSWERED && (
           <div>
             <div
               style={{
@@ -99,7 +142,7 @@ const QuestionTab: React.FC = () => {
                 {imageLoading && <p>Loading image...</p>}
                 {currentImage && !imageLoading && (
                   <img
-                    src={currentImage}
+                    src={currentImage? currentImage: error}
                     className="image"
                     alt="question image"
                     style={{
@@ -119,6 +162,7 @@ const QuestionTab: React.FC = () => {
             </div>
             <p>Correct Answers: {correctCount} / 3</p>
             <div>
+              {/* This line causes error if max question is reached*/}
               <p>{currentQuestion.question}</p>
               <form onSubmit={handleSubmit}>
                 <input
