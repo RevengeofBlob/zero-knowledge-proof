@@ -11,8 +11,7 @@ const Home: React.FC = () => {
       <header className="App-header">
         <img src={logo} className="image" alt="logo" />
         <h3>
-          You want to win a chance to earn tickets to see the Minecraft Movie?
-          FLINT N STEEL!
+          Want to earn free tickets to ride a chicken jockey?
         </h3>
         <Link to="/quiz" className="App Link" style={{color: '#FFF'}} >Click Here To Enter The Raffle!</Link>
       </header>
