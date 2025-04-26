@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { KnowledgeQuestions, Question } from '../data_questions/question';
 import ratImage from '../images/holdrat.png';
 import error from '../images/error.png';
@@ -16,7 +15,7 @@ const shuffle = (array: any[]) => {
 const questions: Question[] = shuffle(KnowledgeQuestions);
 
 const QuestionTab: React.FC = () => {
-  const NUM_NEED_ANSWERED = 3;
+  const NUM_NEED_ANSWERED = 8;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
@@ -24,6 +23,7 @@ const QuestionTab: React.FC = () => {
   const [imageLoading, setImageLoading] = useState(false);
   const [numQuestionsSeen, setNumQuestionsSeen] = useState(0);
   const [maxReached, setMaxReached] = useState(false);
+  const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
   const currentQuestion: Question = questions[currentQuestionIndex];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,16 +38,29 @@ const QuestionTab: React.FC = () => {
     if (currentQuestionIndex + 1 < KnowledgeQuestions.length) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
-    setNumQuestionsSeen(numQuestionsSeen + 1);
+    moveToNextQuestion();
     setUserAnswer(''); // Reset input field
 
   };
 
+  const handleMCSubmit = (selectedOption: string) => {
+    if (selectedOption.toLowerCase() === currentQuestion.answer.toLowerCase()) {
+      setCorrectCount(correctCount + 1);
+    }
+    moveToNextQuestion();
+  };
+
+  // Move to the next question or set maxReached
+  const moveToNextQuestion = () => {
+    if (currentQuestionIndex + 1 < KnowledgeQuestions.length) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+    setNumQuestionsSeen(numQuestionsSeen + 1);
+  };
+
   useEffect(() => {
-    console.log(numQuestionsSeen);
-    // Move to the next question (loop back to 0 if at the end)
+    // Move to the next question
     if (numQuestionsSeen >= KnowledgeQuestions.length) {
-      console.log('Max reached!');
       setMaxReached(true);
     }
   }, [numQuestionsSeen]);
@@ -55,11 +68,14 @@ const QuestionTab: React.FC = () => {
   // Use effect to properly track correctCount
   useEffect(() => {
     if (correctCount === NUM_NEED_ANSWERED) {
-      //window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+      setTimeout(() => {
+        window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+      }, 100);
     }
   }, [correctCount]);
 
   // Dynamically import image if the question has one
+  // Shuffle MC options if question type is 'mc'
   useEffect(() => {
     if (!maxReached && currentQuestion.image) {
       setImageLoading(true);
@@ -76,82 +92,97 @@ const QuestionTab: React.FC = () => {
     } else {
       setCurrentImage(null);
     }
-    //setCurrentImage(currentQuestion.image? ratImage: null);
-  }, [currentQuestion])
+
+    // Shuffle MC options if question type is "mc"
+    if (currentQuestion.type === 'mc' && currentQuestion.mc1 && currentQuestion.mc2 && currentQuestion.mc3 && currentQuestion.mc4) {
+      const options = [
+        currentQuestion.mc1,
+        currentQuestion.mc2,
+        currentQuestion.mc3,
+        currentQuestion.mc4
+      ];
+      setShuffledOptions(shuffle([...options]))
+    }
+
+  }, [currentQuestion, maxReached])
 
   return (
     <div className="App">
       <header className="App-header">
         {!currentQuestion && (
           <div>
-          <img src={ratImage}
-            className='image' 
-            alt="logo" 
-            width="150" 
-            height=""/>
-          <h1>Question Loading...</h1>
-        </div>
+            <img
+              src={ratImage}
+              className="image"
+              alt="logo"
+              width="150"
+              height=""
+            />
+            <h1>Question Loading...</h1>
+          </div>
         )}
         {correctCount === NUM_NEED_ANSWERED && (
           <div>
-            <img src={ratImage}
-              className='image' 
-              alt="rat"  
+            <img
+              src={ratImage}
+              className="image"
+              alt="rat"
               style={{
-                width: '25%', // Fill the container
-                height: '25%', // Fill the container
-                backgroundColor: '#ffffff', // White background
-                display: 'center', // Center the image inside
+                width: '25%',
+                height: '25%',
+                backgroundColor: '#ffffff',
+                display: 'center',
               }}
             />
-            <h1>Thank you for verifying... Please wait.</h1>
+            <h1>Thank you for verifying. Please wait...</h1>
           </div>
         )}
         {maxReached && (
           <div>
-          <img src={ratImage}
-            className='image' 
-            alt="rat"  
-            style={{
-              width: '25%', // Fill the container
-              height: '25%', // Fill the container
-              backgroundColor: '#ffffff', // White background
-              display: 'center', // Center the image inside
-            }}
-          />
-          <h1>Damn you suck!</h1>
-        </div>
+            <img
+              src={ratImage}
+              className="image"
+              alt="rat"
+              style={{
+                width: '25%',
+                height: '25%',
+                backgroundColor: '#ffffff',
+                display: 'center',
+              }}
+            />
+            <h1>Sorry, cannot let you in. Come back in 24 hours!</h1>
+          </div>
         )}
         {!maxReached && correctCount < NUM_NEED_ANSWERED && (
           <div>
             <div
               style={{
-                display: 'flex', // Use flexbox for centering
-                flexDirection: 'column', // Stack items vertically
-                alignItems: 'center', // Center horizontally
-                gap: '10px', // Add some spacing between image and text
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '10px',
               }}
             >
               <div
                 style={{
-                  width: '200px', // Fixed width for the image space
-                  aspectRatio: '1 / 1', // Ensures square shape
-                  marginBottom: '10px', // Consistent spacing below
+                  width: '200px',
+                  aspectRatio: '1 / 1',
+                  marginBottom: '10px',
                 }}
               >
                 {imageLoading && <p>Loading image...</p>}
                 {currentImage && !imageLoading && (
                   <img
-                    src={currentImage? currentImage: error}
+                    src={currentImage ? currentImage : error}
                     className="image"
                     alt="question image"
                     style={{
-                      width: '100%', // Fill the container
-                      height: '100%', // Fill the container
-                      objectFit: 'cover', // Crop to fit square
-                      borderRadius: '8px', // Optional: slight rounding
-                      backgroundColor: '#ffffff', // White background
-                      display: 'flex', // Center the image inside
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                      backgroundColor: '#ffffff',
+                      display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}
@@ -160,42 +191,72 @@ const QuestionTab: React.FC = () => {
               </div>
               <h2>Quiz Time!</h2>
             </div>
-            <p>Correct Answers: {correctCount} / 3</p>
+            <p>Correct Answers: {correctCount} / {NUM_NEED_ANSWERED}</p>
             <div>
-              {/* This line causes error if max question is reached*/}
               <p>{currentQuestion.question}</p>
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  value={userAnswer}
-                  onChange={(e) => setUserAnswer(e.target.value)}
-                  placeholder="Type your answer"
+              {currentQuestion.type === 'mc' ? (
+                <div
                   style={{
-                    backgroundColor: '#ffffff',
-                    color: '#000000',
-                    border: 'none',
-                    padding: '8px 12px',
-                    fontSize: '16px',
-                    marginRight: '10px',
-                    borderRadius: '4px',
-                    outline: 'none',
-                  }}
-                />
-                <button
-                  type="submit"
-                  style={{
-                    backgroundColor: '#3cb371',
-                    color: '#000000',
-                    border: 'none',
-                    padding: '8px 12px',
-                    fontSize: '16px',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                    alignItems: 'center',
                   }}
                 >
-                  Submit
-                </button>
-              </form>
+                  {shuffledOptions.map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleMCSubmit(option)}
+                      style={{
+                        backgroundColor: '#3cb371',
+                        color: '#000000',
+                        border: 'none',
+                        padding: '8px 12px',
+                        fontSize: '16px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        width: '200px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder="Type your answer"
+                    style={{
+                      backgroundColor: '#ffffff',
+                      color: '#000000',
+                      border: 'none',
+                      padding: '8px 12px',
+                      fontSize: '16px',
+                      marginRight: '10px',
+                      borderRadius: '4px',
+                      outline: 'none',
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      backgroundColor: '#3cb371',
+                      color: '#000000',
+                      border: 'none',
+                      padding: '8px 12px',
+                      fontSize: '16px-studio',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Submit
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         )}
