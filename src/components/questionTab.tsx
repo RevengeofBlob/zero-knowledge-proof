@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { KnowledgeQuestions, Question } from '../data_questions/question';
+import { TwentyPointQuestions, TenPointQuestions, FivePointQuestions, Question } from '../data_questions/question';
 import ratImage from '../images/holdrat.png';
 import error from '../images/error.png';
 
@@ -12,32 +12,60 @@ const shuffle = (array: any[]) => {
   } 
   return array; 
 }; 
-const questions: Question[] = shuffle(KnowledgeQuestions);
+const setQuestionsMedium = (array:any[]) =>{
+  array = mediumQuestions
+  return array;
+};
+const setQuestionsHard = (array:any[]) =>{
+  array = hardQuestions
+  return array;
+};
+
+const easyQuestions: Question[] = shuffle(FivePointQuestions);
+const mediumQuestions: Question[] = shuffle(TenPointQuestions);
+const hardQuestions: Question[] = shuffle(TwentyPointQuestions);  
 
 const QuestionTab: React.FC = () => {
-  const NUM_NEED_ANSWERED = 8;
+  const QUESTIONS_PER_DIFFICULTY = 3;
+  const TOTAL_QUESTIONS = 9;
+  const REQUIRED_SCORE = 75;
+  
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [correctCount, setCorrectCount] = useState(0);
+  const [score, setScore] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(false);
   const [numQuestionsSeen, setNumQuestionsSeen] = useState(0);
   const [maxReached, setMaxReached] = useState(false);
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
-  const currentQuestion: Question = questions[currentQuestionIndex];
+  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
+  
+  // Get current question set based on difficulty
+  const getCurrentQuestionSet = () => {
+    switch(difficulty) {
+      case 'easy':
+        return easyQuestions;
+      case 'medium':
+        return mediumQuestions;
+      case 'hard':
+        return hardQuestions;
+      default:
+        return easyQuestions;
+    }
+  };
+
+  const currentQuestion = getCurrentQuestionSet()[currentQuestionIndex];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // Check if the answer is correct (case-insensitive)
     if (userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase()) {
-      setCorrectCount(correctCount + 1);
+      setScore(score + currentQuestion.points);
     }
 
     // Index increment check to prevent crash
-    if (currentQuestionIndex + 1 < KnowledgeQuestions.length) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
     moveToNextQuestion();
     setUserAnswer(''); // Reset input field
 
@@ -45,34 +73,44 @@ const QuestionTab: React.FC = () => {
 
   const handleMCSubmit = (selectedOption: string) => {
     if (selectedOption.toLowerCase() === currentQuestion.answer.toLowerCase()) {
-      setCorrectCount(correctCount + 1);
+      setScore(score + currentQuestion.points);
     }
     moveToNextQuestion();
   };
 
   // Move to the next question or set maxReached
   const moveToNextQuestion = () => {
-    if (currentQuestionIndex + 1 < KnowledgeQuestions.length) {
+    const newNumQuestionsSeen = numQuestionsSeen + 1;
+    setNumQuestionsSeen(newNumQuestionsSeen);
+
+    // Check if we need to change difficulty
+    if (newNumQuestionsSeen % QUESTIONS_PER_DIFFICULTY === 0) {
+      if (difficulty === 'easy') {
+        setDifficulty('medium');
+        setCurrentQuestionIndex(0);
+      } else if (difficulty === 'medium') {
+        setDifficulty('hard');
+        setCurrentQuestionIndex(0);
+      }
+    } else {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
-    setNumQuestionsSeen(numQuestionsSeen + 1);
-  };
 
-  useEffect(() => {
-    // Move to the next question
-    if (numQuestionsSeen >= KnowledgeQuestions.length) {
+    // Check if we've reached total questions
+    if (newNumQuestionsSeen >= TOTAL_QUESTIONS) {
       setMaxReached(true);
     }
-  }, [numQuestionsSeen]);
+  };
+
 
   // Use effect to properly track correctCount
   useEffect(() => {
-    if (correctCount === NUM_NEED_ANSWERED) {
+    if (score >= REQUIRED_SCORE) {
       setTimeout(() => {
         window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
       }, 100);
     }
-  }, [correctCount]);
+  }, [score]);
 
   // Dynamically import image if the question has one
   // Shuffle MC options if question type is 'mc'
@@ -121,7 +159,7 @@ const QuestionTab: React.FC = () => {
             <h1>Question Loading...</h1>
           </div>
         )}
-        {correctCount === NUM_NEED_ANSWERED && (
+        {score === REQUIRED_SCORE && (
           <div>
             <img
               src={ratImage}
@@ -153,7 +191,7 @@ const QuestionTab: React.FC = () => {
             <h1>Sorry, cannot let you in. Come back in 24 hours!</h1>
           </div>
         )}
-        {!maxReached && correctCount < NUM_NEED_ANSWERED && (
+        {!maxReached && score < REQUIRED_SCORE && (
           <div>
             <div
               style={{
@@ -191,7 +229,7 @@ const QuestionTab: React.FC = () => {
               </div>
               <h2>Quiz Time!</h2>
             </div>
-            <p>Correct Answers: {correctCount} / {NUM_NEED_ANSWERED}</p>
+            <p>Score: {score} / 100</p>
             <div>
               <p>{currentQuestion.question}</p>
               {currentQuestion.type === 'mc' ? (
