@@ -40,6 +40,7 @@ const QuestionTab: React.FC = () => {
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [startTime, setStartTime] = useState<Date>(new Date());
+  const [showWarning, setShowWarning] = useState<boolean>(true);
 
   // Get current question set based on difficulty
   const getCurrentQuestionSet = () => {
@@ -61,7 +62,7 @@ const QuestionTab: React.FC = () => {
     e.preventDefault();
     const submitTime = new Date(); // Gets current submit time
     const totalTimeInSec = Math.floor(submitTime.getTime() - startTime.getTime()) / 1000;
-    console.log(totalTimeInSec);
+
     // Check if the answer is correct (case-insensitive)
     if (userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase() && currentQuestion.expectedTime >= totalTimeInSec) {
       setScore(score + currentQuestion.points);
@@ -77,7 +78,7 @@ const QuestionTab: React.FC = () => {
   const handleMCSubmit = (selectedOption: string) => {
     const submitTime = new Date(); // Gets current submit time
     const totalTimeInSec = Math.floor(submitTime.getTime() - startTime.getTime()) / 1000;
-    console.log(totalTimeInSec);
+
     if (selectedOption.toLowerCase() === currentQuestion.answer.toLowerCase() && currentQuestion.expectedTime >= totalTimeInSec) {
       setScore(score + currentQuestion.points);
     }
@@ -99,9 +100,9 @@ const QuestionTab: React.FC = () => {
         setCurrentQuestionIndex(0);
       }
     } else {
+      console.log('changing question index');
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
-    setStartTime(new Date());
     // Check if we've reached total questions
     if (newNumQuestionsSeen >= TOTAL_QUESTIONS) {
       setMaxReached(true);
@@ -151,35 +152,67 @@ const QuestionTab: React.FC = () => {
   }, [currentQuestion, maxReached])
 
 
-  // Use effect to properly determine the time to answer
+  // Use effect to properly determine the start time to answer
   useEffect(() => {
-    
-  }, []);
+    console.log('New start time set');
+    setStartTime(new Date);
+  }, [currentQuestion, showWarning]);
 
   return (
     <div className="App">
       <header className="App-header">
-        {!currentQuestion && (
+        {showWarning && (
           <div>
             <img
               src={ratImage}
               className="image"
               alt="logo"
-              width="150"
+              style={{
+                width: '35%',
+                height: '35%',
+                backgroundColor: '#ffffff',
+                display: 'center',
+              }}
+            />
+            <h2>Please answer these questions to verify your age.</h2>
+            <button
+              type="submit"
+              onClick={() => setShowWarning(false)}
+              style={{
+                backgroundColor: '#3cb371',
+                color: '#000000',
+                border: 'none',
+                padding: '10px 100px',
+                fontSize: '16px-studio',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Proceed
+            </button>
+          </div>
+        )}
+        {!currentQuestion && !showWarning &&(
+          <div>
+            <img
+              src={ratImage}
+              className="image"
+              alt="logo"
+              width=""
               height=""
             />
             <h1>Question Loading...</h1>
           </div>
         )}
-        {score >= REQUIRED_SCORE && (
+        {score >= REQUIRED_SCORE && !showWarning && (
           <div>
             <img
               src={ratImage}
               className="image"
               alt="rat"
               style={{
-                width: '25%',
-                height: '25%',
+                width: '35%',
+                height: '35%',
                 backgroundColor: '#ffffff',
                 display: 'center',
               }}
@@ -187,15 +220,15 @@ const QuestionTab: React.FC = () => {
             <h1>Thank you for verifying. Please wait...</h1>
           </div>
         )}
-        {maxReached && (
+        {maxReached && !showWarning && (
           <div>
             <img
               src={ratImage}
               className="image"
               alt="rat"
               style={{
-                width: '25%',
-                height: '25%',
+                width: '35%',
+                height: '35%',
                 backgroundColor: '#ffffff',
                 display: 'center',
               }}
@@ -203,7 +236,7 @@ const QuestionTab: React.FC = () => {
             <h1>Sorry, cannot let you in. Come back in 24 hours!</h1>
           </div>
         )}
-        {!maxReached && score < REQUIRED_SCORE && (
+        {!maxReached && score < REQUIRED_SCORE && !showWarning && (
           <div>
             <div
               style={{
@@ -239,7 +272,6 @@ const QuestionTab: React.FC = () => {
                   />
                 )}
               </div>
-              <h2>Quiz Time!</h2>
             </div>
             <p>Score: {score} / 100</p>
             <div>
