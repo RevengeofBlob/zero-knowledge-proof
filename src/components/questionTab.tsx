@@ -39,7 +39,8 @@ const QuestionTab: React.FC = () => {
   const [maxReached, setMaxReached] = useState(false);
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
-  
+  const [startTime, setStartTime] = useState<Date>(new Date());
+
   // Get current question set based on difficulty
   const getCurrentQuestionSet = () => {
     switch(difficulty) {
@@ -58,9 +59,11 @@ const QuestionTab: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    const submitTime = new Date(); // Gets current submit time
+    const totalTimeInSec = Math.floor(submitTime.getTime() - startTime.getTime()) / 1000;
+    console.log(totalTimeInSec);
     // Check if the answer is correct (case-insensitive)
-    if (userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase()) {
+    if (userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase() && currentQuestion.expectedTime >= totalTimeInSec) {
       setScore(score + currentQuestion.points);
     }
 
@@ -72,7 +75,10 @@ const QuestionTab: React.FC = () => {
   };
 
   const handleMCSubmit = (selectedOption: string) => {
-    if (selectedOption.toLowerCase() === currentQuestion.answer.toLowerCase()) {
+    const submitTime = new Date(); // Gets current submit time
+    const totalTimeInSec = Math.floor(submitTime.getTime() - startTime.getTime()) / 1000;
+    console.log(totalTimeInSec);
+    if (selectedOption.toLowerCase() === currentQuestion.answer.toLowerCase() && currentQuestion.expectedTime >= totalTimeInSec) {
       setScore(score + currentQuestion.points);
     }
     moveToNextQuestion();
@@ -95,7 +101,7 @@ const QuestionTab: React.FC = () => {
     } else {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
-
+    setStartTime(new Date());
     // Check if we've reached total questions
     if (newNumQuestionsSeen >= TOTAL_QUESTIONS) {
       setMaxReached(true);
@@ -108,7 +114,7 @@ const QuestionTab: React.FC = () => {
     if (score >= REQUIRED_SCORE) {
       setTimeout(() => {
         window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-      }, 100);
+      }, 3000);
     }
   }, [score]);
 
@@ -144,6 +150,12 @@ const QuestionTab: React.FC = () => {
 
   }, [currentQuestion, maxReached])
 
+
+  // Use effect to properly determine the time to answer
+  useEffect(() => {
+    
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -159,7 +171,7 @@ const QuestionTab: React.FC = () => {
             <h1>Question Loading...</h1>
           </div>
         )}
-        {score === REQUIRED_SCORE && (
+        {score >= REQUIRED_SCORE && (
           <div>
             <img
               src={ratImage}
