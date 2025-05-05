@@ -100,7 +100,6 @@ const QuestionTab: React.FC = () => {
         setCurrentQuestionIndex(0);
       }
     } else {
-      console.log('changing question index');
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
     // Check if we've reached total questions
@@ -118,6 +117,16 @@ const QuestionTab: React.FC = () => {
       }, 3000);
     }
   }, [score]);
+
+  // Redirects user to this Russian Minecraft Kid Video if user failed the quiz
+  // The feelings of not getting to ride a chicken gone.
+  useEffect(() => {
+    if (maxReached) {
+      setTimeout(() => {
+        window.location.href = 'https://youtu.be/Gm5EBnLTG90?t=56';
+      }, 5000);
+    }
+  }, [maxReached]);
 
   // Dynamically import image if the question has one
   // Shuffle MC options if question type is 'mc'
@@ -154,7 +163,6 @@ const QuestionTab: React.FC = () => {
 
   // Use effect to properly determine the start time to answer
   useEffect(() => {
-    console.log('New start time set');
     setStartTime(new Date);
   }, [currentQuestion, showWarning]);
 
