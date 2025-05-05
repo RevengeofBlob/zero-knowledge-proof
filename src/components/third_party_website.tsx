@@ -1,17 +1,11 @@
-import React from 'react'; 
+import React from 'react';
+import './third_party_website.css';
 
 const Webpage: React.FC = () => {
     return(
-        <html>
-        <head>
-            <title>We Want Your Data</title>
-        </head>
-        <body>
-            <div>
-
-            </div>
-        </body>
-        </html>
+        <div style={{ color: "lime", background: "grey", height: "100%", padding: "1rem" }}>
+            <p>It opened</p>
+        </div>
     );
 };
 
