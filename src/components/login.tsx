@@ -1,8 +1,7 @@
 import React from 'react';
 import './login.css';
-//import App from '../App';
+import App from '../App';
 import root from '../index';
-import Computer from './fake_computer';
 
 const Login: React.FC = () => {
 
@@ -24,7 +23,7 @@ const Login: React.FC = () => {
     const AccountVerification = (user: string) => {
         root.render(
             <React.StrictMode>
-              <Computer username={user}/>
+              <App/>
             </React.StrictMode>
           );
     }

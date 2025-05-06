@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { TwentyPointQuestions, TenPointQuestions, FivePointQuestions, Question } from '../data_questions/question';
 import ratImage from '../images/holdrat.png';
 import error from '../images/error.png';
+import root from '../index';
+import Computer from './fake_computer';
 
 
 // Function to shuffle elements
@@ -113,7 +115,11 @@ const QuestionTab: React.FC = () => {
   useEffect(() => {
     if (score >= REQUIRED_SCORE) {
       setTimeout(() => {
-        window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        root.render(
+          <React.StrictMode>
+            <Computer username={"test"}/>
+          </React.StrictMode>
+        );
       }, 3000);
     }
   }, [score]);
