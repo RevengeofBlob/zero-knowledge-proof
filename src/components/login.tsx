@@ -24,7 +24,7 @@ const Login: React.FC = () => {
     const AccountVerification = (user: string) => {
         root.render(
             <React.StrictMode>
-              <Computer userId={user}/>
+              <Computer username={user}/>
             </React.StrictMode>
           );
     }

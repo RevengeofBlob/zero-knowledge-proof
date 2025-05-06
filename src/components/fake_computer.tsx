@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import Webpage from './third_party_website';
 import './fake_computer.css';
 
-type Entry = {
-    userId?: string;
-    request?: number;
+export const getHash = () => {
+    return 10;
+};
+
+type ComputerProps = {
+    username: string;
 }
 
-const Computer: React.FC<Entry> = ({userId, request}) => {
+const Computer: React.FC<ComputerProps> = (username) => {
     const [showSite, setShowSite] = useState(false)
 
     return(

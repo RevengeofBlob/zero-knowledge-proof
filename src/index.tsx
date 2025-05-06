@@ -3,16 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import Login from './components/login'
 import reportWebVitals from './reportWebVitals';
-// import sqlite3 from 'sqlite3';
-
-// // Currently errors
-// // Account database setup
-// const db = new sqlite3.Database('accounts.sqlite3');
-
-// db.serialize(() => {
-//   db.run("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, age TEXT");
-// });
-//db.close();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

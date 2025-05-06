@@ -5,6 +5,8 @@
 Install Node.js        
 npm install react   
 npm install node_modules
+npm install better-sqlite3
+npm install --save-dev @types/better-sqlite3
 
 # Running the Website
 
