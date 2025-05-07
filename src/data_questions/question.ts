@@ -282,6 +282,62 @@ export const TwentyPointQuestions: Question[] = [
         mc4: "The Mandalorian",
         points: 20
     },
+    {
+        question: "How many degree measure of a semicircle?",
+        answer: "180", 
+        image: null,
+        expectedTime: 8,
+        type: "fill",
+        points: 20
+    },
+    {
+        question: "How many milligrams are in a gram?",
+        answer: "1000",
+        image: null,
+        expectedTime: 7,
+        type: 'mc',
+        mc1: '1000',
+        mc2: '0.001',
+        mc3: '10',
+        mc4: '10000',
+        points: 20
+    },
+    {
+        question: "What are these called?",
+        answer: "Punnett square",
+        image: 'science1.png',
+        expectedTime: 9,
+        type: 'mc',
+        mc1: 'Punnett square',
+        mc2: 'Probability table',
+        mc3: 'Truth table',
+        mc4: 'Diagram',
+        points: 20
+    },
+    {
+        question: "What is y if x = 11?",
+        answer: "128",
+        image: 'math3.png',
+        expectedTime: 9,
+        type: 'mc',
+        mc1: '128',
+        mc2: '101',
+        mc3: '121',
+        mc4: '115',
+        points: 20
+    },
+    {
+        question: "Which is proportional to this?",
+        answer: "6/8",
+        image: 'math4.png',
+        expectedTime: 9,
+        type: 'mc',
+        mc1: '4/6',
+        mc2: '2/3',
+        mc3: '7/9',
+        mc4: '6/8',
+        points: 20
+    },
 ];
 export const FivePointQuestions: Question[] = [
     {
@@ -446,4 +502,28 @@ export const TenPointQuestions: Question[] = [
         mc4: "Brake sensors are in critical condition",
         points: 10
     },
+    {
+        question: "What is this called?",
+        answer: "Speedometer", 
+        image: "carsym9.png",
+        expectedTime: 8,
+        type: "mc",
+        mc1: "Speed measurer",
+        mc2: "Speedometer",
+        mc3: "Gas meter",
+        mc4: "Mile per hour tracker",
+        points: 10
+    },
+    {
+        question: "Which operation is performed second?",
+        answer: "Division: 6/2",
+        image: 'math5.png',
+        expectedTime: 9,
+        type: 'mc',
+        mc1: 'Division: 6/2',
+        mc2: 'Addition: 1+2',
+        mc3: 'Multiplication: 2(3)',
+        mc4: 'Division: 6/6',
+        points: 20
+    }
 ];
