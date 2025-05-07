@@ -41,6 +41,7 @@ const QuestionTab: React.FC = () => {
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [showWarning, setShowWarning] = useState<boolean>(true);
+  const [initialSelect, setInitialSelect] = useState<'yes' | 'no' | null>(null);
 
   // Get current question set based on difficulty
   const getCurrentQuestionSet = () => {
@@ -119,14 +120,16 @@ const QuestionTab: React.FC = () => {
   }, [score]);
 
   // Redirects user to this Russian Minecraft Kid Video if user failed the quiz
-  // The feelings of not getting to ride a chicken gone.
+  // Or user selects no when self-reporting
   useEffect(() => {
     if (maxReached) {
       setTimeout(() => {
         window.location.href = 'https://youtu.be/Gm5EBnLTG90?t=56';
       }, 5000);
+    } else if (initialSelect === 'no') {
+      window.location.href = 'https://youtu.be/Gm5EBnLTG90?t=56';
     }
-  }, [maxReached]);
+  }, [maxReached, initialSelect]);
 
   // Dynamically import image if the question has one
   // Shuffle MC options if question type is 'mc'
@@ -182,22 +185,46 @@ const QuestionTab: React.FC = () => {
                 display: 'center',
               }}
             />
-            <h2>Please answer these questions to verify your age.</h2>
-            <button
-              type="submit"
-              onClick={() => setShowWarning(false)}
+            <h2>Are you over 13?</h2>
+            <p>Note: You will need to verify if yes</p>
+            <div
               style={{
-                backgroundColor: '#3cb371',
-                color: '#000000',
-                border: 'none',
-                padding: '10px 100px',
-                fontSize: '16px-studio',
-                borderRadius: '4px',
-                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '20px'
               }}
             >
-              Proceed
-            </button>
+              <button
+                type="submit"
+                onClick={() => {setShowWarning(false); setInitialSelect('yes')}}
+                style={{
+                  backgroundColor: '#3cb371',
+                  color: '#000000',
+                  border: 'none',
+                  padding: '10px 90px',
+                  fontSize: '16px-studio',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                Yes
+              </button>
+              <button
+                type="submit"
+                onClick={() => {setInitialSelect('no')}}
+                style={{
+                  backgroundColor: '#3cb371',
+                  color: '#000000',
+                  border: 'none',
+                  padding: '10px 90px',
+                  fontSize: '16px-studio',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                No
+              </button>
+            </div>
           </div>
         )}
         {!currentQuestion && !showWarning &&(
