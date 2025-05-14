@@ -11,9 +11,9 @@ const Home: React.FC = () => {
       <header className="App-header">
         <img src={logo} className="image" alt="logo" />
         <h3>
-          Hypixel's daily reward system.
+          Sign up to be a member of Hypixel
         </h3>
-        <Link to="/quiz" className="App Link" style={{color: '#FFF'}} >Claim your daily rewards here</Link>
+        <Link to="/quiz" className="App Link" style={{color: '#FFF'}} >Sign Me Up</Link>
       </header>
     </div>
   );

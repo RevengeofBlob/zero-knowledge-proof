@@ -43,7 +43,7 @@ const QuestionTab: React.FC = () => {
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [showWarning, setShowWarning] = useState<boolean>(true);
-  const [initialSelect, setInitialSelect] = useState<boolean | null>(null);
+  const [initialSelect, setInitialSelect] = useState<'yes'| 'no'| null>(null);
 
   // Get current question set based on difficulty
   const getCurrentQuestionSet = () => {
@@ -123,10 +123,10 @@ const QuestionTab: React.FC = () => {
     }
   }, [score]);
 
-  // Redirects user to this Russian Minecraft Kid Video if user failed the quiz
+  // Redirects user to google
   // Or user selects no when self-reporting
   useEffect(() => {
-    if (maxReached || !initialSelect) {
+    if (maxReached || initialSelect === 'no') {
       setTimeout(() => {
         window.location.href = 'https://www.google.com';
       }, 5000);
@@ -186,7 +186,6 @@ const QuestionTab: React.FC = () => {
                 display: 'center',
               }}
             />
-            <h1>Before entering please answer truthfully!</h1>
             <h2>Are you over the age of 13?</h2>
             <p>Note: You will need to verify if yes</p>
             <div
@@ -198,7 +197,7 @@ const QuestionTab: React.FC = () => {
             >
               <button
                 type="submit"
-                onClick={() => {setShowWarning(false); setInitialSelect(true)}}
+                onClick={() => {setShowWarning(false); setInitialSelect('yes')}}
                 style={{
                   backgroundColor: '#3cb371',
                   color: '#000000',
@@ -213,7 +212,7 @@ const QuestionTab: React.FC = () => {
               </button>
               <button
                 type="submit"
-                onClick={() => {setInitialSelect(false); setShowWarning(false)}}
+                onClick={() => {setInitialSelect('no'); setShowWarning(false)}}
                 style={{
                   backgroundColor: '#3cb371',
                   color: '#000000',
@@ -229,12 +228,12 @@ const QuestionTab: React.FC = () => {
             </div>
           </div>
         )}
-        {!currentQuestion && !showWarning && initialSelect && (
+        {!currentQuestion && !showWarning && initialSelect === 'yes' && (
           <div>
             <h1>Question Loading...</h1>
           </div>
         )}
-        {score >= REQUIRED_SCORE && !showWarning && initialSelect &&(
+        {score >= REQUIRED_SCORE && !showWarning && initialSelect === 'yes' &&(
           <div>
             <img
               src={greenCheck}
@@ -249,7 +248,7 @@ const QuestionTab: React.FC = () => {
             <h2>Thank you for verifying. Redirecting you to Hypixel...</h2>
           </div>
         )}
-        {maxReached && !showWarning && initialSelect && (
+        {maxReached && !showWarning && initialSelect === 'yes' && (
           <div>
             <img
               src={sadFace}
@@ -267,7 +266,7 @@ const QuestionTab: React.FC = () => {
             </h2>
           </div>
         )}
-        {!initialSelect && !showWarning && (
+        {initialSelect === 'no' && !showWarning && (
           <div>
             <img
               src={sadFace}
@@ -285,7 +284,7 @@ const QuestionTab: React.FC = () => {
             </h2>
           </div>
         )}
-        {!maxReached && score < REQUIRED_SCORE && !showWarning && initialSelect && (
+        {!maxReached && score < REQUIRED_SCORE && !showWarning && initialSelect === 'yes' && (
           <div>
             <div
               style={{
@@ -302,8 +301,8 @@ const QuestionTab: React.FC = () => {
                   marginBottom: '10px',
                 }}
               >
-                {imageLoading && initialSelect && <p>Loading image...</p>}
-                {currentImage && !imageLoading && initialSelect && (
+                {imageLoading && initialSelect === 'yes' && <p>Loading image...</p>}
+                {currentImage && !imageLoading && initialSelect === 'yes' && (
                   <img
                     src={currentImage ? currentImage : error}
                     className="image"
@@ -324,7 +323,7 @@ const QuestionTab: React.FC = () => {
             </div>
             <div>
               <p>{currentQuestion.question}</p>
-              {currentQuestion.type === 'mc' && initialSelect? (
+              {currentQuestion.type === 'mc' && initialSelect === 'yes'? (
                 <div
                   style={{
                     display: 'flex',
