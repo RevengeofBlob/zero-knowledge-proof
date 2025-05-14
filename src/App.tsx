@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './images/freddie313.png';
+import logo from './images/HypixelLogo.png';
 import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
 import QuestionTab from './components/questionTab';
 import './App.css';
@@ -11,9 +11,9 @@ const Home: React.FC = () => {
       <header className="App-header">
         <img src={logo} className="image" alt="logo" />
         <h3>
-          Want to earn free tickets to be a chicken jockey??
+          Hypixel's daily reward system.
         </h3>
-        <Link to="/quiz" className="App Link" style={{color: '#FFF'}} >Click Here To Enter The Raffle!</Link>
+        <Link to="/quiz" className="App Link" style={{color: '#FFF'}} >Claim your daily rewards here</Link>
       </header>
     </div>
   );

@@ -505,7 +505,7 @@ export const TenPointQuestions: Question[] = [
     {
         question: "What is this called?",
         answer: "Speedometer", 
-        image: "carsym9.png",
+        image: "carsym9.jpg",
         expectedTime: 8,
         type: "mc",
         mc1: "Speed measurer",
@@ -514,16 +514,4 @@ export const TenPointQuestions: Question[] = [
         mc4: "Mile per hour tracker",
         points: 10
     },
-    {
-        question: "Which operation is performed second?",
-        answer: "Division: 6/2",
-        image: 'math5.png',
-        expectedTime: 9,
-        type: 'mc',
-        mc1: 'Division: 6/2',
-        mc2: 'Addition: 1+2',
-        mc3: 'Multiplication: 2(3)',
-        mc4: 'Division: 6/6',
-        points: 20
-    }
 ];

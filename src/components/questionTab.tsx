@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TwentyPointQuestions, TenPointQuestions, FivePointQuestions, Question } from '../data_questions/question';
-import ratImage from '../images/holdrat.png';
+import greenCheck from '../images/green_check.png';
+import sadFace from '../images/sadface.jpg';
+import stopEmoji from '../images/stop_emoji.jpg';
 import error from '../images/error.png';
 
 
@@ -41,7 +43,7 @@ const QuestionTab: React.FC = () => {
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [showWarning, setShowWarning] = useState<boolean>(true);
-  const [initialSelect, setInitialSelect] = useState<'yes' | 'no' | null>(null);
+  const [initialSelect, setInitialSelect] = useState<boolean | null>(null);
 
   // Get current question set based on difficulty
   const getCurrentQuestionSet = () => {
@@ -63,6 +65,7 @@ const QuestionTab: React.FC = () => {
     e.preventDefault();
     const submitTime = new Date(); // Gets current submit time
     const totalTimeInSec = Math.floor(submitTime.getTime() - startTime.getTime()) / 1000;
+    //console.log(totalTimeInSec);
 
     // Check if the answer is correct (case-insensitive)
     if (userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase() && currentQuestion.expectedTime >= totalTimeInSec) {
@@ -79,6 +82,7 @@ const QuestionTab: React.FC = () => {
   const handleMCSubmit = (selectedOption: string) => {
     const submitTime = new Date(); // Gets current submit time
     const totalTimeInSec = Math.floor(submitTime.getTime() - startTime.getTime()) / 1000;
+    //console.log(totalTimeInSec);
 
     if (selectedOption.toLowerCase() === currentQuestion.answer.toLowerCase() && currentQuestion.expectedTime >= totalTimeInSec) {
       setScore(score + currentQuestion.points);
@@ -114,7 +118,7 @@ const QuestionTab: React.FC = () => {
   useEffect(() => {
     if (score >= REQUIRED_SCORE) {
       setTimeout(() => {
-        window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        window.location.href = 'https://hypixel.net/';
       }, 3000);
     }
   }, [score]);
@@ -122,12 +126,10 @@ const QuestionTab: React.FC = () => {
   // Redirects user to this Russian Minecraft Kid Video if user failed the quiz
   // Or user selects no when self-reporting
   useEffect(() => {
-    if (maxReached) {
+    if (maxReached || !initialSelect) {
       setTimeout(() => {
-        window.location.href = 'https://youtu.be/Gm5EBnLTG90?t=56';
+        window.location.href = 'https://www.google.com';
       }, 5000);
-    } else if (initialSelect === 'no') {
-      window.location.href = 'https://youtu.be/Gm5EBnLTG90?t=56';
     }
   }, [maxReached, initialSelect]);
 
@@ -175,17 +177,17 @@ const QuestionTab: React.FC = () => {
         {showWarning && (
           <div>
             <img
-              src={ratImage}
+              src={stopEmoji}
               className="image"
-              alt="logo"
               style={{
-                width: '35%',
-                height: '35%',
+                width: '25%',
+                height: '25%',
                 backgroundColor: '#ffffff',
                 display: 'center',
               }}
             />
-            <h2>Are you over 13?</h2>
+            <h1>Before entering please answer truthfully!</h1>
+            <h2>Are you over the age of 13?</h2>
             <p>Note: You will need to verify if yes</p>
             <div
               style={{
@@ -196,7 +198,7 @@ const QuestionTab: React.FC = () => {
             >
               <button
                 type="submit"
-                onClick={() => {setShowWarning(false); setInitialSelect('yes')}}
+                onClick={() => {setShowWarning(false); setInitialSelect(true)}}
                 style={{
                   backgroundColor: '#3cb371',
                   color: '#000000',
@@ -211,7 +213,7 @@ const QuestionTab: React.FC = () => {
               </button>
               <button
                 type="submit"
-                onClick={() => {setInitialSelect('no')}}
+                onClick={() => {setInitialSelect(false); setShowWarning(false)}}
                 style={{
                   backgroundColor: '#3cb371',
                   color: '#000000',
@@ -227,24 +229,16 @@ const QuestionTab: React.FC = () => {
             </div>
           </div>
         )}
-        {!currentQuestion && !showWarning &&(
+        {!currentQuestion && !showWarning && initialSelect && (
           <div>
-            <img
-              src={ratImage}
-              className="image"
-              alt="logo"
-              width=""
-              height=""
-            />
             <h1>Question Loading...</h1>
           </div>
         )}
-        {score >= REQUIRED_SCORE && !showWarning && (
+        {score >= REQUIRED_SCORE && !showWarning && initialSelect &&(
           <div>
             <img
-              src={ratImage}
+              src={greenCheck}
               className="image"
-              alt="rat"
               style={{
                 width: '35%',
                 height: '35%',
@@ -252,26 +246,46 @@ const QuestionTab: React.FC = () => {
                 display: 'center',
               }}
             />
-            <h1>Thank you for verifying. Please wait...</h1>
+            <h2>Thank you for verifying. Redirecting you to Hypixel...</h2>
           </div>
         )}
-        {maxReached && !showWarning && (
+        {maxReached && !showWarning && initialSelect && (
           <div>
             <img
-              src={ratImage}
+              src={sadFace}
               className="image"
               alt="rat"
               style={{
-                width: '35%',
-                height: '35%',
+                width: '20%',
+                height: '20%',
                 backgroundColor: '#ffffff',
                 display: 'center',
               }}
             />
-            <h1>Sorry, cannot let you in. Come back in 24 hours!</h1>
+            <h2>Sorry, cannot let you in. Please contact our staff if you are over 13.
+              Redirecting you to fallback...
+            </h2>
           </div>
         )}
-        {!maxReached && score < REQUIRED_SCORE && !showWarning && (
+        {!initialSelect && !showWarning && (
+          <div>
+            <img
+              src={sadFace}
+              className="image"
+              alt="rat"
+              style={{
+                width: '20%',
+                height: '20%',
+                backgroundColor: '#ffffff',
+                display: 'center',
+              }}
+            />
+            <h2>Sorry, only users over the age of 13 are allowed to access our services.
+              Redirecting you off our site...
+            </h2>
+          </div>
+        )}
+        {!maxReached && score < REQUIRED_SCORE && !showWarning && initialSelect && (
           <div>
             <div
               style={{
@@ -288,8 +302,8 @@ const QuestionTab: React.FC = () => {
                   marginBottom: '10px',
                 }}
               >
-                {imageLoading && <p>Loading image...</p>}
-                {currentImage && !imageLoading && (
+                {imageLoading && initialSelect && <p>Loading image...</p>}
+                {currentImage && !imageLoading && initialSelect && (
                   <img
                     src={currentImage ? currentImage : error}
                     className="image"
@@ -308,10 +322,9 @@ const QuestionTab: React.FC = () => {
                 )}
               </div>
             </div>
-            <p>Score: {score} / 100</p>
             <div>
               <p>{currentQuestion.question}</p>
-              {currentQuestion.type === 'mc' ? (
+              {currentQuestion.type === 'mc' && initialSelect? (
                 <div
                   style={{
                     display: 'flex',
